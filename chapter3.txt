@@ -1,0 +1,29 @@
+ex 3.53
+(define s (cons-stream 1 (add-stream s s)))
+で定義する stream の要素を述べる。
+
+(stream-ref s 0)
+->
+(stream-car (cons 1 (add s s))) だから
+1
+
+(stream-ref s 1)
+->
+(stream-car (add s s)) だから
+(stream-car (stream-map + s s)) だから
+(map + (list (car s) (car s))) だから
+2
+
+(stream-ref s 2)
+->
+(map + (list (car (cdr s)) (car (cdr s)))) だから
+4?
+
+(stream-ref s 3)
+->
+(map + (list (car (cdr (cdr s))) (car (cdr (cdr s))))) だから
+8
+
+
+以下同じ。
+よって 2^n になる。
