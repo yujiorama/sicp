@@ -128,3 +128,8 @@
                 (stream-cdr t))
     (pairs (stream-cdr s) (stream-cdr t)))))
 
+
+(define (seq from step to)
+  (if (< from to)
+      (cons from (seq (+ from step) step to))
+      to))
