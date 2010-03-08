@@ -34,9 +34,31 @@
 (define sum-order-pairs (weighted-pairs integers integers weight-a))
 
 ;; b. 和 2i + 3j + 5ij に従って順序づけられた、i <= j で、i も j も 2, 3, 5 で割り切れない正の整数の対 (i,j) のすべてのストリーム
-;;
+;; filter すればいいですね
 ;;
 (define (weight-b x y)
   (< (+ (* 2 (car x)) (* 3 (cadr x)) (* 5 (car x) (cadr x)))
      (+ (* 2 (car y)) (* 3 (cadr y)) (* 5 (car y) (cadr y)))))
 
+(define 235order-pairs
+  (stream-filter
+   (lambda (x)
+     (let ((i (car x))
+           (j (cadr x)))
+       (and (<= i j)
+            (not
+             (or
+              (= 0 (modulo i 2)) (= 0 (modulo i 3)) (= 0 (modulo i 5))
+              (= 0 (modulo j 2)) (= 0 (modulo j 3)) (= 0 (modulo j 5)))))))
+   (weighted-pairs integers integers weight-b)))
+
+
+;; 確認用。次の計算結果を表示します
+;; (i,j) 2i + 3j + 5ij
+;; (map
+;;  (lambda (i)
+;;    (let ((x (stream-ref 235order-pairs i)))
+;;      (print x
+;;             " "
+;;             (+ (* 2 (car x)) (* 3 (cadr x)) (* 5 (car x) (cadr x))))))
+;;  (seq 1 1 50))
