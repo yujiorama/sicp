@@ -28,7 +28,10 @@
 
 (define (integers-starting-from n)
   (cons-stream n (integers-starting-from (+ n 1))))
+
 (define integers (integers-starting-from 1))
+
+(define ones (cons-stream 1 ones))
 
 
 (define (sieve s)
@@ -133,3 +136,14 @@
   (if (< from to)
       (cons from (seq (+ from step) step to))
       to))
+
+
+;; pp.203 より信号としてのストリーム
+(define (integral integrand initial-value dt)
+  (define int
+    (cons-stream initial-value
+                 (add-stream (scale-stream integrand dt)
+                              int)))
+  int)
+
+
