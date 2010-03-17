@@ -20,4 +20,5 @@
                (make-zero-crossings (stream-cdr input-stream)
                                     (stream-car input-stream))))
 
+;; 部品化というので関数適用してみる
 (define zero-crossings (make-zero-crossings (smooth sense-data) 0))

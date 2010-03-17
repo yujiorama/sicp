@@ -147,3 +147,12 @@
   int)
 
 
+
+;; pp.205 より積分器のはなし
+
+;; この定義は動かない
+;; y が評価されるとき dy が評価されるが、dy の定義より前に定義されてるのでコンパイルできない
+(define (solve f y0 dt)
+  (define y (integral dy y0 dt))
+  (define dy (stream-map f y))
+  y)
