@@ -168,13 +168,14 @@
 ;;       x)))
 (use srfi-27)
 (define random-init
-  (random-integer (sys-time)))
+  (lambda ()
+    (random-integer (sys-time))))
 (define rand-update
-  (random-integer (sys-time)))
+  (lambda (x) (random-integer (sys-time))))
 
-(define (random-numbers)
-  (cons-steram random-init
-               (stream-map rand-update (random-numbers))))
+(define random-numbers
+  (cons-stream (random-init)
+               (stream-map rand-update random-numbers)))
 
 (define (map-successive-pairs proc s)
   (cons-stream
