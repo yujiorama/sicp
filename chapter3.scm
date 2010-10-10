@@ -202,3 +202,6 @@
 (define pi
   (stream-map (lambda (p) (sqrt (/ 6 p)))
               (monte-carlo cesaro-stream 0 0)))
+
+(define (integers-from n)
+  (cons-stream n (integers-starting-from (+ n 1))))
