@@ -184,3 +184,33 @@
 (define (rest-operands ops)
   (cdr ops))
 
+(define (cond? exp)
+  (tagged-list? exp 'cond))
+
+(define (cond-clauses exp)
+  (cdr exp))
+
+(define (cond-else-clause? clause)
+  (eq? (cond-predicate clause) 'else))
+
+(define (cond-predicate clause)
+  (car clause))
+
+(define (cond-actions clause)
+  (cdr clause))
+
+(define (cond->if exp)
+  (expand-clause (cond-clauses exp)))
+
+(define (expand-clause clauses)
+  (if (null? clause)
+      #f
+      (let ((first (car clauses))
+            (rest (cdr clauses)))
+        (if (cond-else-clause? first)
+            (if (null? rest)
+                (sequence->exp (cond-actions first))
+                (error "ELSE clause isn't last -- COND->IF" clauses))
+            (make-if (cond-predicate first)
+                     (sequence->exp (cond-actions first))
+                     (expand-clause rest))))))
