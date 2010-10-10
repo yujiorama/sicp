@@ -34,9 +34,9 @@
 (define (eval-and exp env)
   (cond ((null? exp) #t)
         ((last-exp? exp) (eval (first-exp exp) env))
-        (else (if (eval (first-exp exp) env)
-                  (eval-and (rest-exps exp) env)
-                  #f))))
+        (else (and
+               (eval (first-exp exp) env)
+               (eval-and (rest-exps exp) env)))))
 
 (define (or? exp)
   (tagged-list? exp 'or))
@@ -44,6 +44,7 @@
 (define (eval-or exp env)
   (cond ((null? exp) #f)
         ((last-exp? exp) (eval (first-exp exp) env))
-        (else (if (eval (first-exp exp) env)
-                  #t
+        (else (or (eval (first-exp exp) env)
                   (eval-or (rest-exps exp) env)))))
+
+
