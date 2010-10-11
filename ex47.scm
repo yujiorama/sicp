@@ -10,5 +10,3 @@
     (let ((z (+ x y 5)))
       (* x z))))
 
-(define (let*->nested-lets exp env)
-  )
