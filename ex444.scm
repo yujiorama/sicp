@@ -4,6 +4,11 @@
   (tagged-list? exp 'and))
 
 (define (eval-and exp env)
+  (if (null? (cdr exp))
+      #t
+      (and (eval (cadr exp) env) (eval-and (cddr exp) env))))
+
+(define (eval-and exp env)
   (define (iter result rest)
     (if (false? result)
         #f
@@ -16,6 +21,11 @@
 
 (define (or? exp)
   (tagged-list? exp 'or))
+
+(define (eval-or exp env)
+  (if (null? (cdr exp))
+      #f
+      (or (eval (cadr exp) env) (eval-or (cddr exp) env))))
 
 (define (eval-or exp env)
   (define (iter result rest)
