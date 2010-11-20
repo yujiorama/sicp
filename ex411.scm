@@ -15,7 +15,7 @@
 (define (add-binding-to-frame! var val frame)
   (cons (cons var val) frame))
 
-(define (extend-envronment vars vals base-env)
+(define (extend-environment vars vals base-env)
   (if (= (length vars) (length vals))
       (cons (make-frame vars vals) base-env)
       (if (< (length vars) (length vals))
