@@ -221,6 +221,11 @@
 (define (false? x)
   (eq? x #f))
 
+(define (apply-primitive-procedure proc args)
+  (proc args))
+
+(define primitive-procedure? procedure?)
+
 (define (make-procedure parameters body env)
   (list 'procedure parameters body env))
 
