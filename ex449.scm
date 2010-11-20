@@ -26,7 +26,6 @@ proc は反復ごとに評価される引数を取らない手続き。
     (iter)))
 
 (define (while loop-condition proc)
-  (let vars
-      (define (iter)
-        (cond ((loop-condition) (eval proc env) (iter)))
-              (else #f))))
+  (define (iter)
+    (cond ((loop-condition) (eval proc env) (iter)))
+    (else #f))))
