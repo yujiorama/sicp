@@ -28,4 +28,4 @@ proc は反復ごとに評価される引数を取らない手続き。
 (define (while loop-condition proc)
   (define (iter)
     (cond ((loop-condition) (eval proc env) (iter)))
-    (else #f))))
+    (else #f)))
