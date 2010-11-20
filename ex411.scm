@@ -1,17 +1,19 @@
 ;; フレームの各束縛が名前と値の対になるように環境演算を直す
 
 (define (make-frame variables values)
-  (cons variables values))
+  (if (null? variables)
+      (error "Too many values supplied" variables values)
+      (cons (cons (car variables) (car values))
+            (make-frame (cdr variables) (cdr values)))))
 
 (define (frame-variables frame)
-  (car frame))
+  (map car frame))
 
 (define (frame-values frame)
-  (cdr frame))
+  (map cadr frame))
 
 (define (add-binding-to-frame! var val frame)
-  (set-car! frame (cons var (car frame)))
-  (set-cdr! frame (cons val (cdr frame))))
+  (cons (cons var val) frame))
 
 (define (extend-envronment vars vals base-env)
   (if (= (length vars) (length vals))
@@ -22,7 +24,7 @@
 
 (define (lookup-variable-value var env)
   (define (env-loop env)
-    (define (scan vaars vals)
+    (define (scan vars vals)
       (cond ((null? vars)
              (env-loop (enclosing-environment env)))
             ((eq? var (car vars))
