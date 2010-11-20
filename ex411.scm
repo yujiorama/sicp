@@ -2,7 +2,7 @@
 
 (define (make-frame variables values)
   (if (null? variables)
-      (error "Too many values supplied" variables values)
+      '()
       (cons (cons (car variables) (car values))
             (make-frame (cdr variables) (cdr values)))))
 
