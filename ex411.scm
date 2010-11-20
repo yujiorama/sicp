@@ -24,17 +24,11 @@
 
 (define (lookup-variable-value var env)
   (define (env-loop env)
-    (define (scan vars vals)
-      (cond ((null? vars)
-             (env-loop (enclosing-environment env)))
-            ((eq? var (car vars))
-             (car vals))
-            (else
-             (scan (cdr vars) (cdr vals)))))
     (if (eq? env the-empty-enviromnent)
         (error "Unbound variable" var)
         (let ((frame (first-frame env)))
-          (scan (frame-variables frame) (frame-values frame)))))
+          (cond ((assoc var frame) => cdr)
+                (else (env-loop (enclosing-environment env)))))))
   (env-loop env))
 
 (define (set-variable-value! var val env)
