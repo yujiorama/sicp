@@ -1,5 +1,21 @@
 
 
+(define apply-in-underlying-scheme apply)
+
+
+(define (apply procedure arguments)
+  (cond ((primitive-procedure? procedure)
+         (apply-primitive-procedure procedure arguments))
+        ((compound-procedure? procedure)
+         (eval-sequence
+          (procedure-body procedure)
+          (extend-environment
+           (procedure-parameters procedure)
+           arguments
+           (procedure-environment procedure))))
+        (else
+         (error "Unknown procedure type -- APPLY" procedure))))
+
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
@@ -19,20 +35,6 @@
                 (list-of-values (operands exp) env)))
         (else
          (error "Unkown expression type -- EVAL" exp))))
-
-(define apply-in-underlying-scheme apply)
-(define (apply procedure arguments)
-  (cond ((primitive-procedure? procedure)
-         (apply-primitive-procedure procedure arguments))
-        ((compound-procedure? procedure)
-         (eval-sequence
-          (procedure-body procedure)
-          (extend-environment
-           (procedure-parameters procedure)
-           arguments
-           (procedure-environment procedure))))
-        (else
-         (error "Unknown procedure type -- APPLY" procedure))))
 
 
 (define (list-of-values exps env)
@@ -328,6 +330,8 @@
         (list '- -)
         (list '* *)
         (list '/ /)
+        (list 'display display)
+        (list 'newline newline)
         ))
 
 (define (primitive-procedure-names)
@@ -340,10 +344,8 @@
 
 
 (define (apply-primitive-procedure proc args)
-  (let ((primitive-proc (primitive-implementation proc)))
-    (print primitive-proc)
-    (apply-in-underlying-scheme
-     primitive-proc args)))
+  (apply-in-underlying-scheme
+     (primitive-implementation proc) args))
 
 (define input-prompt ";;; M-Eval input:")
 (define output-prompt ";;; M-Eval value:")
