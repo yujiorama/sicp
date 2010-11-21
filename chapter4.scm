@@ -20,6 +20,7 @@
         (else
          (error "Unkown expression type -- EVAL" exp))))
 
+(define apply-in-underlying-scheme apply)
 (define (apply procedure arguments)
   (cond ((primitive-procedure? procedure)
          (apply-primitive-procedure procedure arguments))
@@ -172,7 +173,7 @@
 (define (operator exp)
   (car exp))
 
-(define (oprands exp)
+(define (operands exp)
   (cdr exp))
 
 (define (no-operands? ops)
@@ -306,14 +307,12 @@
 
 (define (setup-environment)
   (let ((initial-env
-         (expand-environment (primitive-procedure-names)
+         (extend-environment (primitive-procedure-names)
                              (primitive-procedure-objects)
                              the-empty-enviromnent)))
     (define-variable! 'true #t initial-env)
-    (define-variable! 'false #f initial-env))
-  initial-env)
-
-(define the-global-environment (setup-environment))
+    (define-variable! 'false #f initial-env)
+    initial-env))
 
 (define (primitive-procedure? proc)
   (tagged-list? proc 'primitive))
@@ -341,11 +340,10 @@
 
 
 (define (apply-primitive-procedure proc args)
-  (apply-in-underlying-scheme
-   (primitive-implementation proc) args))
-
-(define apply-in-underlying-scheme apply)
-
+  (let ((primitive-proc (primitive-implementation proc)))
+    (print primitive-proc)
+    (apply-in-underlying-scheme
+     primitive-proc args)))
 
 (define input-prompt ";;; M-Eval input:")
 (define output-prompt ";;; M-Eval value:")
