@@ -21,3 +21,19 @@
           (scan (frame-variables frame) (frame-values frame)))))
   (env-loop env))
 
+
+;; b. 内部定義のある手続きを let に変換する scan-out-defines を書く
+;;; 内部定義は上から書いてあると仮定しておく
+(define (scan-out-defines exp)
+  (define (extract-inner-define-names exp)
+    )
+  (let ((inner-defines
+         (extract-inner-defines
+          (cond ((definition? exp)
+                 (if (symbol? (cadr exp))
+                     (caddr exp)
+                     (cddr exp)))
+                ((lambda? exp)
+                 (lambda-body exp)))))
+        (
+        ))
