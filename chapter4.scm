@@ -206,7 +206,7 @@
   (expand-clause (cond-clauses exp)))
 
 (define (expand-clause clauses)
-  (if (null? clause)
+  (if (null? clauses)
       #f
       (let ((first (car clauses))
             (rest (cdr clauses)))
@@ -326,6 +326,7 @@
         (list 'cdr cdr)
         (list 'cons cons)
         (list 'null? null?)
+        (list 'list list)
         (list '+ +)
         (list '- -)
         (list '* *)
