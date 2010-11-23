@@ -35,9 +35,6 @@
           (inner-defines (cdr exp))))
         (else '())))
 
-(define (define-body exp)
-  (cddr exp))
-
 ;; 内部定義を除いた手続きを返す
 (define (only-body exp)
   (cond ((null? exp) '())
@@ -46,18 +43,29 @@
         (else exp)))
 
 ;; 内部手続きを let で名前に束縛する
-(define (scan-out-defines exp)
-  (let ((body (define-body exp)))
-    (let ((defines (inner-defines body)))
-      (if (null? defines)
-          exp
-          (cons 'let
-            (cons
-             (map (lambda (x)
-                    (cons (car x) '*unassigned*))
-                  defines)
-             (cons
-              (map (lambda (x)
-                     (cons 'set! (cons (car x) (cdr x))))
-                   defines)
-              (only-body body))))))))
+(define (scan-out-defines body)
+  (let ((defines (inner-defines body)))
+    (if (null? defines)
+        body
+        (cons 'let
+              (cons
+               (map (lambda (x)
+                      (cons (car x) '*unassigned*))
+                    defines)
+               (cons
+                (map (lambda (x)
+                       (cons 'set! (cons (car x) (cdr x))))
+                     defines)
+                (only-body body)))))))
+
+
+;; c. scan-out-defines を make-procedure かまたは procedure-body かに組み込む
+
+;; (define (make-procedure parameters body env)
+;;   (list 'procedure parameters body env))
+(define (make-procedure parameters body env)
+  (list 'procedure parameters (scan-out-defines body) env))
+
+;; (define (procedure-body p) (caddr p))
+(define (procedure-body p)
+  (scan-out-defines p))
