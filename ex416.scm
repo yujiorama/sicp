@@ -31,7 +31,7 @@
         ((definition? (car exp))
          (cons
           (cons (definition-variable (car exp))
-                (define-body (car exp)))
+                (scan-out-defines (cddar exp)))
           (inner-defines (cdr exp))))
         (else '())))
 
@@ -44,7 +44,7 @@
 
 ;; 内部手続きを let で名前に束縛する
 (define (scan-out-defines body)
-  (let ((defines (inner-defines body)))
+  (let ((defines (inner-defines #?=body)))
     (if (null? defines)
         body
         (cons 'let
