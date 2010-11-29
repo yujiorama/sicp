@@ -22,42 +22,38 @@
 
 
 ;; b. 内部定義のある手続きを let に変換する scan-out-defines を書く
-;;; 内部定義は上から書いてあると仮定しておく
+;; yad-EL さんのカンニングした。だいたい同じだったけどちょっと進歩
+;; http://sicp.g.hatena.ne.jp/yad-EL/20080507/1210174173
+;;
+(define (scan lst body defs)
+  (cond ((null? lst)
+         (cons body defs))
+        ((not (pair? lst))
+         (scan '() (cons lst body) defs))
+        ((definition? (car lst))
+         (scan (cdr lst)
+               body
+               (cons (cons (definition-variable (car lst))
+                           (definition-value (car lst)))
+                     defs)))
+        (else
+         (scan (cdr lst)
+               (cons (car lst) body)
+               defs))))
 
-;; 内部定義の名前と手続きの対からなるリストを返す
-(define (inner-defines exp)
-  (cond ((null? exp) '())
-        ((not (pair? exp)) '())
-        ((definition? (car exp))
-         (cons
-          (cons (definition-variable (car exp))
-                (scan-out-defines (cddar exp)))
-          (inner-defines (cdr exp))))
-        (else '())))
-
-;; 内部定義を除いた手続きを返す
-(define (only-body exp)
-  (cond ((null? exp) '())
-        ((definition? (car exp))
-         (only-body (cdr exp)))
-        (else exp)))
-
-;; 内部手続きを let で名前に束縛する
-(define (scan-out-defines body)
-  (let ((defines (inner-defines #?=body)))
-    (if (null? defines)
-        body
-        (cons 'let
-              (cons
-               (map (lambda (x)
-                      (cons (car x) '*unassigned*))
-                    defines)
-               (cons
-                (map (lambda (x)
-                       (cons 'set! (cons (car x) (cdr x))))
-                     defines)
-                (only-body body)))))))
-
+(define (scan-out-defines exp)
+  (let ((lst (scan exp '() '())))
+    (let ((body (car lst))
+          (def-names (map car (cdr lst)))
+          (def-bodies (map cdr (cdr lst))))
+      (if (null? def-names)
+          body
+          (append
+           (list
+            'let
+            (map (lambda (name) (cons name '*unassigned*)) def-names))
+           (map (lambda (name body) (list 'set! name body)) def-names def-bodies)
+           body)))))
 
 ;; c. scan-out-defines を make-procedure かまたは procedure-body かに組み込む
 
