@@ -1,6 +1,8 @@
 ;; 内部定義を let に変換して、逐次定義による問題を回避する
 
 (load "./chapter4.scm")
+(load "./ex406.scm")
+;(load "./ex407.scm")
 
 ;; a. lookup-variable-value を変更して *unassigned* を見つけたらエラーにする
 (define (lookup-variable-value var env)
@@ -48,12 +50,11 @@
           (def-bodies (map cdr (cdr lst))))
       (if (null? def-names)
           body
-          (append
-           (list
-            'let
-            (map (lambda (name) (cons name '*unassigned*)) def-names))
-           (map (lambda (name body) (list 'set! name body)) def-names def-bodies)
-           body)))))
+          (list 'let
+                (map (lambda (name) (list name '*unassigned*)) def-names)
+                (append
+                 (map (lambda (name body) (list 'set! name body)) def-names def-bodies)
+                 body))))))
 
 ;; c. scan-out-defines を make-procedure かまたは procedure-body かに組み込む
 
