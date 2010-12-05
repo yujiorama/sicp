@@ -1,4 +1,3 @@
-(load "./chapter4.scm")
 ;; let は lambda で等価な式が書けるから、let は導出式
 ;; let を lambda にする let->combination を実装して、eval に組み込む
 
@@ -28,7 +27,7 @@
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
         ((application? exp)
-         (apply (eval (operator exp) env)
-                (list-of-values (operands exp) env)))
+         (my-apply (eval (operator exp) env)
+                   (list-of-values (operands exp) env)))
         (else
          (error "Unkown expression type -- EVAL" exp))))
