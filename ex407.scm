@@ -16,15 +16,15 @@
   (tagged-list? exp 'let*))
 
 (define (let*->nested-lets exp)
-  (define (make-let vars body)
-    (let ((let-body (if (null? (cdr vars))
-                        body
-                        (make-let (cdr vars) body))))
-      (list 'let
-            (list
-             (car vars))
-            let-body)))
-  (make-let (cadr exp) (cddr exp)))
+  (let ((body (cddr exp)))
+    (define (iter vars)
+      (cond ((null? (cdr vars))
+             (cons 'let (cons (list (car vars)) body)))
+            (else
+             (list 'let
+                   (list (car vars))
+                   (iter (cdr vars))))))
+    (iter (cadr exp))))
 
 ;; eval を拡張する
 (define (eval exp env)
@@ -35,7 +35,7 @@
         ((definition? exp) (eval-definition exp env))
         ((if? exp) (eval-if exp env))
         ((let? exp) (eval (cons (let->combination exp) (let-values exp)) env))
-        ((let*? exp) (eval (let*->nested-lets exp) env)
+        ((let*? exp) (eval (let*->nested-lets exp) env))
         ((lambda? exp)
          (make-procedure (lambda-parameters exp)
                          (lambda-body exp)
@@ -44,7 +44,7 @@
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
         ((application? exp)
-         (apply (eval (operator exp) env)
-                (list-of-values (operands exp) env)))
+         (my-apply (eval (operator exp) env)
+                   (list-of-values (operands exp) env)))
         (else
-         (error "Unkown expression type -- EVAL" exp)))))
+         (error "Unkown expression type -- EVAL" exp))))
