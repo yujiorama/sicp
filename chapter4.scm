@@ -3,7 +3,7 @@
 (define apply-in-underlying-scheme apply)
 
 
-(define (apply procedure arguments)
+(define (my-apply procedure arguments)
   (cond ((primitive-procedure? procedure)
          (apply-primitive-procedure procedure arguments))
         ((compound-procedure? procedure)
@@ -31,7 +31,7 @@
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
         ((application? exp)
-         (apply (eval (operator exp) env)
+         (my-apply (eval (operator exp) env)
                 (list-of-values (operands exp) env)))
         (else
          (error "Unkown expression type -- EVAL" exp))))
