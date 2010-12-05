@@ -56,7 +56,7 @@
         ((and? exp) (eval-and exp env))
         ((or? exp) (eval-or exp env))
         ((application? exp)
-         (apply (eval (operator exp) env)
+         (my-apply (eval (operator exp) env)
                 (list-of-values (operands exp) env)))
         (else
          (error "Unkown expression type -- EVAL" exp))))

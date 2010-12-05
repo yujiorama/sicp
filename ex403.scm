@@ -11,7 +11,7 @@
     (put lambda? (lambda (exp env) (make-procedure (lambda-parameters exp) (lambda-body exp) env)))
     (put begin? (lambda (exp env) (eval-sequence (begin-actions exp) env)))
     (put cond? (lambda (exp env) (cond->if exp) env))
-    (put appliction? (lambda (exp env) (apply (eval (operator exp) env)
+    (put appliction? (lambda (exp env) (my-apply (eval (operator exp) env)
                                               (list-of-values (operands exp) env))))
     )
 (define (eval exp env)

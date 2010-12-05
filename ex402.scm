@@ -6,7 +6,7 @@
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (text-of-quotation exp))
         ((application? exp)
-         (apply (eval (operator exp) env)
+         (my-apply (eval (operator exp) env)
                 (list-of-values (operands exp) env)))
         ((assignment? exp) (eval-assignment exp env))
         ((definition? exp) (eval-definition exp env))
