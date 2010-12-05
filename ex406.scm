@@ -1,3 +1,4 @@
+(load "./chapter4.scm")
 ;; let は lambda で等価な式が書けるから、let は導出式
 ;; let を lambda にする let->combination を実装して、eval に組み込む
 
@@ -5,11 +6,11 @@
   (tagged-list? exp 'let))
 
 (define (let->combination exp)
-  (make-lambda (map (lambda (x) (car x)) (cadr exp))
+  (make-lambda (map car (cadr exp))
                (cddr exp)))
 
 (define (let-values exp)
-  (map (lambda (x) (cadr x)) (cadr exp)))
+  (map cadr (cadr exp)))
 
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
