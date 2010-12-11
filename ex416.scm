@@ -2,7 +2,7 @@
 
 (load "./chapter4.scm")
 (load "./ex406.scm")
-;(load "./ex407.scm")
+(load "./ex407.scm")
 
 ;; a. lookup-variable-value を変更して *unassigned* を見つけたらエラーにする
 (define (lookup-variable-value var env)
@@ -29,9 +29,9 @@
 ;;
 (define (scan lst body defs)
   (cond ((null? lst)
-         (cons body defs))
-        ((not (pair? lst))
-         (scan '() (cons lst body) defs))
+         (cons (reverse body) (reverse defs)))
+        ((null? (cdr lst))
+         (scan '() (cons (car lst) body) defs))
         ((definition? (car lst))
          (scan (cdr lst)
                body
@@ -50,19 +50,20 @@
           (def-bodies (map cdr (cdr lst))))
       (if (null? def-names)
           body
-          (list 'let
-                (map (lambda (name) (list name '*unassigned*)) def-names)
-                (append
-                 (map (lambda (name body) (list 'set! name body)) def-names def-bodies)
-                 body))))))
+          (append
+           (list 'let
+                 (map (lambda (name) (list name '*unassigned*)) def-names))
+           (append
+            (map (lambda (name body) (list 'set! name body)) def-names def-bodies)
+            body))))))
 
 ;; c. scan-out-defines を make-procedure かまたは procedure-body かに組み込む
 
 ;; (define (make-procedure parameters body env)
 ;;   (list 'procedure parameters body env))
-(define (make-procedure parameters body env)
-  (list 'procedure parameters (scan-out-defines body) env))
+;; (define (make-procedure parameters body env)
+;;   (list 'procedure parameters (scan-out-defines body) env))
 
 ;; (define (procedure-body p) (caddr p))
-(define (procedure-body p)
-  (scan-out-defines p))
+;;(define (procedure-body p)
+;;  (scan-out-defines p))
