@@ -58,11 +58,15 @@
             body))))))
 
 ;; c. scan-out-defines を make-procedure かまたは procedure-body かに組み込む
+;; make-procedure は lambda 式にだけ適用されるみたい。
+;; define は値としての lambda 式を持つようになるから、define された式の内部 define だけが対象になる
+;; procedure-body は eval-sequence の全てに適用される。
+;; なので、効率という意味では make-procedure に組み込むのがよい。
 
 ;; (define (make-procedure parameters body env)
 ;;   (list 'procedure parameters body env))
 ;; (define (make-procedure parameters body env)
-;;   (list 'procedure parameters (scan-out-defines body) env))
+;;  (list 'procedure parameters (scan-out-defines body) env))
 
 ;; (define (procedure-body p) (caddr p))
 ;;(define (procedure-body p)
