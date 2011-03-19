@@ -1,3 +1,5 @@
+(load "./chapter4.scm")
+
 (define (eval exp env)
   ((analyze exp) env))
 
@@ -62,7 +64,7 @@
     (lambda (env)
       (if (true? (pproc env))
           (cproc env)
-          (aproc env))))
+          (aproc env)))))
 
 ;; lambda
 (define (analyze-lambda exp)
@@ -70,3 +72,17 @@
         (bproc (analyze-sequence (lambda-body exp))))
     (lambda (env)
       (make-procedure vars bproc env))))
+
+;; sequence
+(define (analyze-sequence exps)
+  (define (sequentially proc1 proc2)
+    (lambda (env) (proc1 env) (proc2 env)))
+  (define (loop first-proc rest-procs)
+    (if (null? rest-procs)
+        first-proc
+        (loop (sequentially first-spec (car resp-procs))
+              (cdr rest-procs))))
+  (let ((procs (map analyze exps)))
+    (if (null? procs)
+        (error "Empy sequence -- ANALYZE")
+        (loop (car procs) (cdr procs)))))
