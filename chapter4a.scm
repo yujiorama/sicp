@@ -86,3 +86,24 @@
     (if (null? procs)
         (error "Empy sequence -- ANALYZE")
         (loop (car procs) (cdr procs)))))
+
+(define (analyze-application exp)
+  (let ((pproc (analyze (operator exp)))
+        (aprocs (map analyze (operands exp))))
+    (lambda (env)
+      (execute-application (pproc env)
+                           (map (lambda (aproc) (aproc env))
+                                aprocs)))))
+
+(define (execute-application proc args)
+  (cond ((primitive-procedure? proc)
+         (apply-primitive-procedure proc args))
+        ((compound-procedure? proc)
+         (extend-environment (procedure-parameters proc)
+                             args
+                             (procedure-environment proc)))
+        (else
+         (error
+          "Unknown procedure type -- EXECUTE-APPLICATION"
+          proc))))
+
