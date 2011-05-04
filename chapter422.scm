@@ -1,5 +1,6 @@
 (load "./chapter4.scm")
 
+;;; メモ化されてないサンク
 (define (force-it obj)
   (if (thunk? obj)
       (actual-value (thunk-exp obj) (thunk-env obj))
@@ -16,6 +17,25 @@
 
 (define (thunk-env thunk)
   (caddr thunk))
+
+;;; メモ化されたサンク
+(define (evaluated-thunk? obj)
+  (tagged-list? obj 'evaluated-thunk))
+(define (thunk-value evaluated-thunk)
+  (cadr evaluated-thunk))
+(define (force-it obj)
+  (cond ((thunk? obj)
+         (let ((result (actual-value
+                        (thunk-exp obj)
+                        (thunk-env obj))))
+           (set-car! obj 'evaluated-thunk)
+           (set-car! (cdr obj) result)
+           (set-cdr! (cdr obj) '())
+           result))
+        ((evaluated-thunk? obj)
+         (thunk-value obj))
+        (else obj)))
+
 
 (define (my-apply procedure arguments env)
   (cond ((primitive-procedure? procedure)
